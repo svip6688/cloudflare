@@ -1,5 +1,5 @@
 <?php
-$apiKey = "9de522186c7a38dcf157"; // 替换成你的 NameSilo API Key     https://www.namesilo.com/account/api-manager
+$apiKey = "4555855665455"; // 替换成你的 NameSilo API Key     https://www.namesilo.com/account/api-manager
 $domainsFile = "domain.txt";
 
 // 读取域名列表
