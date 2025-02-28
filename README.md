@@ -9,11 +9,14 @@ cloudflare批量添加域名及添加dns解析记录php脚本
 配置方法：
 
 1、首先修改config.php中
+
 return [
+
     // Cloudflare 账户的邮箱
     'cloudflare_email' => 'admin@gmail.com',
 
     // Cloudflare 账户的 Global API Key ⚠️ 请替换为你的真实 API Key，请从 https://dash.cloudflare.com/profile/api-tokens 查
+    
     'cloudflare_api_key' => '315551111155555e7',
 
     // 手动指定的 zoneId，或者可以通过 API 获取
@@ -26,7 +29,7 @@ X-Auth-Email及X-Auth-Key参数从cloudflare后台中查看。其它部分代码
 
 3、record.txt为待加入的解析列表。一行一个。文件编码为utf-8，格式为windows（cr lf）格式（务必）。每行分3列，以逗号分隔，第一列为主机记录，如www，第二列为记录类型，如A记录，第三列为值，如114.114.114.114
 
-4、推荐在命令行中执行 php index.php，不要在浏览器中访问。
+4、 index.php在浏览器中访问。
 
 
 sc.php为批量生成域名，打开sc.php第10行代码修改要注册的域名，11-12行代码是从1-99批量写入，13行代码是要注册的后缀
