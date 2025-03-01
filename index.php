@@ -161,7 +161,7 @@
 
     <!-- 导航栏 -->
     <div class="navbar">
-        欢迎使用，Cloudflare批量添加域名系统
+        欢迎使用，Cloudflare批量操作系统
     </div>
 
     <!-- 按钮区 -->
