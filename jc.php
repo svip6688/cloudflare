@@ -1,8 +1,6 @@
 <?php
 set_time_limit(5000); // 设置最大执行时间为 5 分钟
 
-// 你的其他代码
-
 function getWhoisServer($tld) {
     // 常见域名后缀的 WHOIS 服务器列表
     $whoisServers = [
@@ -17,9 +15,9 @@ function getWhoisServer($tld) {
         "biz" => "whois.nic.biz",
         "info"=> "whois.afilias.net",
         "us"  => "whois.nic.us",
-        "uk"  => "whois.nic.uk",
-        "co"  => "whois.nic.co",
-        "tv"  => "whois.nic.tv",
+        "uk" => "whois.nic.uk",
+        "co" => "whois.nic.co",
+        "tv" => "whois.nic.tv",
         "edu" => "whois.educause.edu",
     ];
 
@@ -80,9 +78,9 @@ function checkDomainAvailability($domain) {
 
     // 解析 WHOIS 响应（不同服务器返回格式不同）
     if (stripos($response, "No match") !== false || stripos($response, "NOT FOUND") !== false || stripos($response, "Status: AVAILABLE") !== false) {
-        return "<span style='color: green;'>可注册</span>";
+        return "<span style='color: green;'>✔ 可注册</span>";
     } else {
-        return "<span style='color: red;'>已注册</span>";
+        return "<span style='color: red;'>❌ 已注册</span>";
     }
 }
 
@@ -104,16 +102,16 @@ echo "<h2>域名注册检测结果</h2><pre>";
 foreach ($domains as $domain) {
     $status = checkDomainAvailability($domain);
     
-    if (stripos($status, "Available") !== false) {
+    if (stripos($status, "✔ 可注册") !== false) {
         echo "$domain: $status ✅<br>";
-        $availableDomains[] = $domain;
+        $availableDomains[] = $domain;  // Add available domain to the array
     } else {
         echo "$domain: $status ❌<br>";
     }
 }
 echo "</pre>";
 
-// 导出可注册的域名到 d.txt
+// 导出可注册的域名到 domain.txt
 if (!empty($availableDomains)) {
     file_put_contents("domain.txt", implode("\n", $availableDomains));
     echo "<p>✅ 可注册域名已导出到 <strong>domain.txt</strong></p>";
