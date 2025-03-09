@@ -70,37 +70,97 @@ $file = 'domain.txt';  // 读取域名文件
 
 if (file_exists($file)) {
     $domains = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);  // 读取每一行的域名
-    echo "<html><body>";  // 开始 HTML 输出
+    echo "<html>
+	<head>
+	<title>DNS 删除域名管理</title>
+	<!--link rel='icon' type='image/x-icon' href='https://cdn4.iconfinder.com/data/icons/web-hosting-filled-line-1/100/web_hosting_colored_line_dns_padlock-64.png'-->
+    <link rel='icon' type='image/x-icon' href='https://cdn-icons-png.flaticon.com/128/18405/18405093.png'>
+	<style>
+            body {
+                font-family: 'Arial', sans-serif;
+                background-color: #f4f6f9;
+                color: #333;
+                margin: 0;
+                padding: 0;
+            }
+            .container {
+                max-width: 800px;
+                margin: 50px auto;
+                background-color: #fff;
+                padding: 20px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                border-radius: 8px;
+            }
+            h1 {
+                text-align: center;
+                color: #333;
+            }
+            .domain {
+                background-color: #fafafa;
+                padding: 10px;
+                margin-bottom: 20px;
+                border-radius: 5px;
+                border: 1px solid #ddd;
+            }
+            .domain h3 {
+                margin: 0;
+                color: #333;
+            }
+            .result {
+                margin-top: 10px;
+                padding: 10px;
+                font-size: 14px;
+            }
+            .success {
+                color: green;
+            }
+            .error {
+                color: red;
+            }
+            hr {
+                border: 0;
+                border-top: 1px solid #eee;
+            }
+            .footer {
+                text-align: center;
+                margin-top: 30px;
+                font-size: 14px;
+                color: #777;
+            }
+            </style></head><body>";
+    echo "<div class='container'>";
+    echo "<h1>Cloudflare 域名批量删除</h1>";
 
     foreach ($domains as $domain) {
-        echo "<div>";
-
-        echo "<strong>正在处理域名: {$domain}</strong><br>";
+        echo "<div class='domain'>";
+        echo "<h3>正在处理域名: {$domain}</h3>";
 
         // 获取域名的 Zone ID
         $zoneId = getZoneIdByDomain($domain);
 
         if ($zoneId) {
-            echo "获取域名: {$domain} 的 Zone ID: {$zoneId}<br>";
+            echo "<div class='result'>获取域名: {$domain} 的 Zone ID: {$zoneId}</div>";
 
             // 删除 Zone
             $deleteSuccess = deleteZone($zoneId);
 
             if ($deleteSuccess) {
-                echo "<span style='color: green;'>域名（Zone）删除成功！</span><br>";
+                echo "<div class='result success'>域名（Zone）删除成功！</div>";
             } else {
-                echo "<span style='color: red;'>删除域名（Zone）失败！</span><br>";
+                echo "<div class='result error'>删除域名（Zone）失败！</div>";
             }
         } else {
-            echo "<span style='color: red;'>获取域名: {$domain} 的 Zone ID 失败！</span><br>";
+            echo "<div class='result error'>获取域名: {$domain} 的 Zone ID 失败！</div>";
         }
 
-        echo "<hr>";  // 分割线
+        echo "<hr>";
         echo "</div>";
     }
 
-    echo "</body></html>";  // 结束 HTML 输出
+    echo "</div>";
+    echo "<div class='footer'>处理完毕</div>";
+    echo "</body></html>";
 } else {
-    echo "无法找到 domain.txt 文件！";
+    echo "<div class='error'>无法找到 domain.txt 文件！</div>";
 }
 ?>

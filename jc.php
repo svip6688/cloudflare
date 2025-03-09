@@ -60,13 +60,13 @@ function checkDomainAvailability($domain) {
     $whoisServer = getWhoisServer($tld);
     
     if (!$whoisServer) {
-        return "<span style='color: orange;'>Unsupported TLD</span>";
+        return "<span class='status orange'>不支持的 TLD</span>";
     }
 
     $port = 43;
     $connection = fsockopen($whoisServer, $port, $errno, $errstr, 10);
     if (!$connection) {
-        return "<span style='color: red;'>Error: $errstr ($errno)</span>";
+        return "<span class='status red'>连接错误: $errstr ($errno)</span>";
     }
 
     fwrite($connection, $domain . "\r\n");
@@ -78,9 +78,9 @@ function checkDomainAvailability($domain) {
 
     // 解析 WHOIS 响应（不同服务器返回格式不同）
     if (stripos($response, "No match") !== false || stripos($response, "NOT FOUND") !== false || stripos($response, "Status: AVAILABLE") !== false) {
-        return "<span style='color: green;'>✔ 可注册</span>";
+        return "<span class='status green'>✔ 可注册</span>";
     } else {
-        return "<span style='color: red;'>❌ 已注册</span>";
+        return "<span class='status red'>❌ 已注册</span>";
     }
 }
 
@@ -98,24 +98,138 @@ if (empty($domains)) {
 
 $availableDomains = [];
 
-echo "<h2>域名注册检测结果</h2><pre>";
+echo "<!DOCTYPE html>
+<html lang='zh'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>域名注册检测</title>
+	<!--link rel='icon' type='image/x-icon' href='https://cdn4.iconfinder.com/data/icons/web-hosting-filled-line-1/100/web_hosting_colored_line_dns_padlock-64.png'-->
+    <link rel='icon' type='image/x-icon' href='https://cdn-icons-png.flaticon.com/128/18405/18405093.png'>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f9f9f9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        h2 {
+            color: #333;
+            font-size: 32px;
+            margin-bottom: 30px;
+        }
+        table {
+            width: 80%;
+            margin-bottom: 30px;
+            border-collapse: collapse;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        th, td {
+            padding: 15px;
+            text-align: center;
+            position: relative;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+            font-weight: bold;
+        }
+        td {
+            color: #555;
+            font-size: 16px;
+        }
+        .status {
+            font-weight: bold;
+        }
+        .green {
+            color: #2ecc71;
+        }
+        .red {
+            color: #e74c3c;
+        }
+        .orange {
+            color: #f39c12;
+        }
+        .button {
+            padding: 12px 24px;
+            background: linear-gradient(145deg, #3498db, #2980b9);
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            font-size: 18px;
+            box-shadow: 0 6px 8px rgba(0,0,0,0.1);
+            transition: background 0.3s ease;
+        }
+        .button:hover {
+            background: linear-gradient(145deg, #2980b9, #3498db);
+        }
+        .alert {
+            font-size: 18px;
+            margin-top: 20px;
+            padding: 12px;
+            color: #fff;
+            border-radius: 8px;
+        }
+        .alert.success {
+            background-color: #2ecc71;
+        }
+        .alert.error {
+            background-color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <h2>域名注册检测结果</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>域名</th>
+                <th>状态</th>
+            </tr>
+        </thead>
+        <tbody>";
+
 foreach ($domains as $domain) {
     $status = checkDomainAvailability($domain);
     
+    // 如果是可注册的域名，则加入 availableDomains 数组
     if (stripos($status, "✔ 可注册") !== false) {
-        echo "$domain: $status ✅<br>";
-        $availableDomains[] = $domain;  // Add available domain to the array
-    } else {
-        echo "$domain: $status ❌<br>";
+        $availableDomains[] = $domain;
     }
-}
-echo "</pre>";
 
-// 导出可注册的域名到 domain.txt
-if (!empty($availableDomains)) {
-    file_put_contents("domain.txt", implode("\n", $availableDomains));
-    echo "<p>✅ 可注册域名已导出到 <strong>domain.txt</strong></p>";
-} else {
-    echo "<p>❌ 没有可注册的域名。</p>";
+    // 将域名和状态显示在表格的一行
+    echo "<tr>
+            <td>$domain</td>
+            <td>$status</td>
+        </tr>";
 }
+
+echo "</tbody>
+    </table>";
+
+if (!empty($availableDomains)) {
+    // 生成可注册域名文件
+    file_put_contents("domain.txt", implode("\n", $availableDomains));
+
+    // 显示下载按钮和导出信息
+    echo "<a href='domain.txt' class='button'>下载可注册域名列表</a>";
+    echo "<div class='alert success'>✅ 可注册域名已导出到 <strong>domain.txt</strong></div>";
+} else {
+    // 如果所有域名都不可注册
+    echo "<div class='alert error'>❌ 所有域名均已注册</div>";
+}
+
+echo "</body></html>";
 ?>
